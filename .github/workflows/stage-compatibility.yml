@@ -1,0 +1,35 @@
+name: Stage compatibility
+
+on:
+  push:
+    branches: [develop]
+    paths:
+      - 'stages/**'
+      - 'tools/check_stages.py'
+      - '.github/workflows/stage-compatibility.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'stages/**'
+      - 'tools/check_stages.py'
+      - '.github/workflows/stage-compatibility.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check-stages:
+    name: Verify both playable stages
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out game files
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Run read-only compatibility checker
+        run: python tools/check_stages.py stages
+        
